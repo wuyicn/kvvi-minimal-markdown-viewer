@@ -71,6 +71,55 @@ final class WebRendererIntegrationTests: XCTestCase {
         XCTAssertNotNil(PrintCoordinator().operation(for: webView))
     }
 
+    func testReaderUsesCompactSoftTextAndTableVisualHierarchy() async throws {
+        let markdown = """
+        ## 阶段门禁
+        正文包含 **重点内容**。
+
+        | 门禁 | 条件 | 状态 |
+        | --- | --- | --- |
+        | G1 | 契约资产已搬入本仓库 | 已完成 |
+        | G2 | 改造点清单已建立 | 已完成 |
+
+        > 门禁的含义：未通过，下一阶段不得启动。
+        """
+        let html = try ReaderHTMLBuilder().build(markdown: markdown)
+        let webView = WKWebView(frame: .zero)
+        try await load(html: html, into: webView)
+
+        let value = try await webView.callAsyncJavaScript(
+            """
+            const style = (selector) => getComputedStyle(document.querySelector(selector));
+            return {
+              bodyColor: style('body').color,
+              headingColor: style('h2').color,
+              strongColor: style('strong').color,
+              tableFontSize: style('table').fontSize,
+              headerBackground: style('th').backgroundColor,
+              headerWeight: style('th').fontWeight,
+              cellBorderColor: style('td').borderColor,
+              cellPaddingTop: style('td').paddingTop,
+              evenRowBackground: style('tbody tr:nth-child(2)').backgroundColor,
+              quoteColor: style('blockquote').color
+            };
+            """,
+            arguments: [:],
+            in: nil,
+            contentWorld: .page
+        )
+        let snapshot = try XCTUnwrap(value as? [String: Any])
+        XCTAssertEqual(snapshot["bodyColor"] as? String, "rgb(58, 62, 68)")
+        XCTAssertEqual(snapshot["headingColor"] as? String, "rgb(47, 52, 59)")
+        XCTAssertEqual(snapshot["strongColor"] as? String, "rgb(47, 52, 59)")
+        XCTAssertEqual(snapshot["tableFontSize"] as? String, "15.64px")
+        XCTAssertEqual(snapshot["headerBackground"] as? String, "rgb(247, 248, 250)")
+        XCTAssertEqual(snapshot["headerWeight"] as? String, "600")
+        XCTAssertEqual(snapshot["cellBorderColor"] as? String, "rgb(223, 227, 232)")
+        XCTAssertEqual(snapshot["cellPaddingTop"] as? String, "7px")
+        XCTAssertEqual(snapshot["evenRowBackground"] as? String, "rgb(250, 251, 252)")
+        XCTAssertEqual(snapshot["quoteColor"] as? String, "rgb(117, 124, 133)")
+    }
+
     private func load(html: String, into webView: WKWebView) async throws {
         try await withCheckedThrowingContinuation { continuation in
             let delegate = NavigationFinishDelegate(continuation: continuation)
