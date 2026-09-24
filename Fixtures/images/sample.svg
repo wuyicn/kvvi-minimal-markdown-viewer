@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260" role="img" aria-labelledby="title description">
+  <title id="title">KVVI Markdown 本地图片</title>
+  <desc id="description">用于验证离线本地图片显示的蓝绿色渐变示例图。</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="260" rx="28" fill="url(#background)"/>
+  <text x="360" y="120" text-anchor="middle" fill="white" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="44" font-weight="700">KVVI MD</text>
+  <text x="360" y="172" text-anchor="middle" fill="#dbeafe" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="24">本地图片 · 完全离线</text>
+</svg>

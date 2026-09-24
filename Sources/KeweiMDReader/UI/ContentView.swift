@@ -49,6 +49,10 @@ struct ContentView: View {
                     Label("放大", systemImage: "textformat.size.larger")
                 }
                 .disabled(viewModel.document == nil || viewModel.fontSize >= 28)
+                Button(action: printDocument) {
+                    Label("打印", systemImage: "printer")
+                }
+                .disabled(readerWebView == nil)
             }
         }
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted, perform: handleDrop)
@@ -91,6 +95,11 @@ struct ContentView: View {
             guard response == .OK, let url = panel.url else { return }
             open(url)
         }
+    }
+
+    private func printDocument() {
+        guard let readerWebView else { return }
+        PrintCoordinator().print(readerWebView)
     }
 
     private func open(_ url: URL) {

@@ -11,5 +11,13 @@ final class OpenDocumentBrokerTests: XCTestCase {
         broker.markConsumed(url)
         XCTAssertNil(broker.pendingURL)
     }
-}
 
+    func testAppDelegateAcceptsModernOpenURLEvent() {
+        let url = URL(fileURLWithPath: "/tmp/from-finder.md")
+
+        AppDelegate().application(NSApplication.shared, open: [url])
+
+        XCTAssertEqual(OpenDocumentBroker.shared.pendingURL, url)
+        OpenDocumentBroker.shared.markConsumed(url)
+    }
+}
