@@ -1,6 +1,26 @@
-# KVVI Minimal Markdown Viewer
+<p align="center">
+  <img src="Packaging/AppIcon-1024.png" width="128" alt="可微MD极简阅读器图标">
+</p>
 
-**可微MD极简阅读器**是一款只读、离线、极简的 macOS Markdown（`.md`）预览器。它面向只想舒服阅读 Markdown、又不需要代码编辑功能的用户。
+<h1 align="center">可微MD极简阅读器</h1>
+
+<p align="center">
+  KVVI Minimal Markdown Viewer<br>
+  一款只读、离线、极简的 macOS Markdown 阅读器。
+</p>
+
+## 它适合谁
+
+如果你只想像阅读普通文档一样打开 `.md` 文件，不需要写代码，也不需要复杂的编辑功能，这个应用就是为这种场景设计的。
+
+## 主要特点
+
+- **只读安全**：不会保存、覆盖或修改原始 Markdown 文件。
+- **完全离线**：阅读和渲染不依赖网络，也不需要账户。
+- **简洁排版**：支持标题、列表、表格、引用、代码块和任务清单。
+- **本地图片**：可安全显示 Markdown 文件目录内的图片。
+- **字号调整**：通过工具栏快速缩小或放大正文。
+- **打印与 PDF**：使用 macOS 打印面板打印或存储为 PDF。
 
 ## 系统要求
 
@@ -10,7 +30,9 @@
 
 ## 安装
 
-1. 下载并解压 `可微MD极简阅读器.zip`。
+如果你已经取得安装包：
+
+1. 解压 `可微MD极简阅读器-v1.0.0.zip`。
 2. 将 `可微MD极简阅读器.app` 拖入“应用程序”文件夹。
 3. 第一次打开时，在 Finder 中右键应用，选择“打开”，再在系统提示中确认“打开”。
 
@@ -19,7 +41,6 @@
 ## 使用方法
 
 - 点击应用中的“打开文件”，选择 `.md` 或 `.markdown` 文件。
-- 将 Markdown 文件直接拖入窗口。
 - 在 Finder 中选中 `.md` 文件，右键选择“打开方式 → 可微MD极简阅读器”。
 - 工具栏的缩小、放大按钮可在 14–28 号之间调整正文字号。
 - 点击打印按钮可打开 macOS 系统打印面板，也可在打印面板中“存储为 PDF”。
@@ -41,7 +62,7 @@
 - 原始 HTML 不会执行，外部链接只有在用户点击后才交给系统浏览器。
 - 无账户、无同步、无遥测、无插件。
 
-## 第一版限制
+## 当前版本限制
 
 - 仅支持 macOS 和 Apple 芯片。
 - 不提供 Markdown 编辑、目录侧栏、全文搜索、导出管理或多标签页。
@@ -54,10 +75,19 @@
 
 ## 开发与验证
 
+克隆仓库后，在项目根目录运行：
+
 ```bash
 swift test
-scripts/build_app.sh
-scripts/smoke_test.sh
+./scripts/build_app.sh
+./scripts/smoke_test.sh
 ```
 
-生成物位于 `dist/`。项目使用随仓库固定的 `markdown-it 15.0.2`，第三方许可见 `THIRD_PARTY_LICENSES.md`。
+生成物位于 `dist/`。项目使用仓库内固定的 `markdown-it 15.0.2`，第三方许可见 [`THIRD_PARTY_LICENSES.md`](Sources/KeweiMDReader/Resources/THIRD_PARTY_LICENSES.md)。
+
+## 项目信息
+
+- GitHub 仓库名称：`kvvi-minimal-markdown-viewer`
+- 当前版本：`v1.0.0`
+- 开发语言：Swift / SwiftUI / WebKit
+- 许可证：仓库暂未声明开源许可证，默认保留所有权利。
