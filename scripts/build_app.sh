@@ -22,6 +22,7 @@ rm -f "${zip_archive}"
 mkdir -p "${app_bundle}/Contents/MacOS" "${app_bundle}/Contents/Resources"
 cp "${release_directory}/KeweiMDReader" "${app_bundle}/Contents/MacOS/KeweiMDReader"
 cp -R "${resource_bundle}" "${app_bundle}/Contents/Resources/"
+cp "${project_directory}/Packaging/AppIcon.icns" "${app_bundle}/Contents/Resources/AppIcon.icns"
 cp "${project_directory}/Packaging/Info.plist" "${app_bundle}/Contents/Info.plist"
 
 codesign --force --deep --sign - "${app_bundle}"

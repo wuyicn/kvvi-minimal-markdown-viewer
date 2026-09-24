@@ -10,6 +10,8 @@
   <string>KeweiMDReader</string>
   <key>CFBundleIdentifier</key>
   <string>com.kewei.mdreader</string>
+  <key>CFBundleIconFile</key>
+  <string>AppIcon</string>
   <key>CFBundleName</key>
   <string>可微MD极简阅读器</string>
   <key>CFBundlePackageType</key>
