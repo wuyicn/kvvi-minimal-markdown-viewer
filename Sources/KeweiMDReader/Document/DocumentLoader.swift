@@ -1,6 +1,6 @@
 import Foundation
 
-struct LoadedDocument: Equatable {
+struct LoadedDocument: Equatable, Sendable {
     let url: URL
     let text: String
     let baseDirectory: URL
