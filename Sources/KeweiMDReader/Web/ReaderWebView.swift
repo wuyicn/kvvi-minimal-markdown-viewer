@@ -23,21 +23,23 @@ struct ReaderWebView: NSViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.allowsMagnification = false
+        context.coordinator.onReady = onReady
         context.coordinator.load(document, fontSize: fontSize, in: webView)
-        DispatchQueue.main.async { onReady?(webView) }
         return webView
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
+        context.coordinator.onReady = onReady
         context.coordinator.load(document, fontSize: fontSize, in: webView)
-        DispatchQueue.main.async { onReady?(webView) }
     }
 
     @MainActor
     final class Coordinator: NSObject, WKNavigationDelegate {
         let imageHandler: LocalImageSchemeHandler
+        var onReady: ((WKWebView) -> Void)?
         private var loadedSignature: String?
         private var appliedFontSize: Int?
+        private var desiredFontSize = 17
 
         init(baseDirectory: URL) {
             imageHandler = LocalImageSchemeHandler(baseDirectory: baseDirectory)
@@ -45,8 +47,10 @@ struct ReaderWebView: NSViewRepresentable {
 
         func load(_ document: LoadedDocument, fontSize: Int, in webView: WKWebView) {
             let signature = document.url.path + ":" + String(document.text.hashValue)
+            desiredFontSize = min(max(fontSize, 14), 28)
             if loadedSignature != signature {
                 loadedSignature = signature
+                appliedFontSize = nil
                 imageHandler.updateBaseDirectory(document.baseDirectory)
                 do {
                     let html = try ReaderHTMLBuilder().build(markdown: document.text)
@@ -57,15 +61,23 @@ struct ReaderWebView: NSViewRepresentable {
                         baseURL: nil
                     )
                 }
+                return
             }
 
-            let clamped = min(max(fontSize, 14), 28)
-            if appliedFontSize != clamped {
-                appliedFontSize = clamped
-                webView.evaluateJavaScript(
-                    "document.documentElement.style.setProperty('--reader-font-size', '\(clamped)px')"
-                )
-            }
+            applyFontSizeIfNeeded(in: webView)
+        }
+
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            applyFontSizeIfNeeded(in: webView)
+            onReady?(webView)
+        }
+
+        private func applyFontSizeIfNeeded(in webView: WKWebView) {
+            guard appliedFontSize != desiredFontSize else { return }
+            appliedFontSize = desiredFontSize
+            webView.evaluateJavaScript(
+                "document.documentElement.style.setProperty('--reader-font-size', '\(desiredFontSize)px')"
+            )
         }
 
         func webView(

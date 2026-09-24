@@ -103,6 +103,7 @@ struct ContentView: View {
     }
 
     private func open(_ url: URL) {
+        readerWebView = nil
         Task {
             await viewModel.open(url)
             broker.markConsumed(url)

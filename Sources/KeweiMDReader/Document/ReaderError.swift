@@ -17,4 +17,3 @@ enum ReaderError: Error, Equatable {
         }
     }
 }
-

@@ -41,6 +41,36 @@ final class WebRendererIntegrationTests: XCTestCase {
         XCTAssertEqual(snapshot["remotePlaceholderCount"] as? Int, 1)
     }
 
+    func testReaderCoordinatorSignalsReadyAndAppliesFontAfterNavigation() async throws {
+        let document = LoadedDocument(
+            url: URL(fileURLWithPath: "/tmp/font.md"),
+            text: "# 字号测试",
+            baseDirectory: URL(fileURLWithPath: "/tmp")
+        )
+        let coordinator = ReaderWebView.Coordinator(baseDirectory: document.baseDirectory)
+        let configuration = WKWebViewConfiguration()
+        configuration.setURLSchemeHandler(
+            coordinator.imageHandler,
+            forURLScheme: "kewei-image"
+        )
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = coordinator
+
+        await withCheckedContinuation { continuation in
+            coordinator.onReady = { readyWebView in
+                XCTAssertIdentical(readyWebView, webView)
+                continuation.resume()
+            }
+            coordinator.load(document, fontSize: 23, in: webView)
+        }
+
+        let value = try await webView.evaluateJavaScript(
+            "getComputedStyle(document.documentElement).getPropertyValue('--reader-font-size').trim()"
+        )
+        XCTAssertEqual(value as? String, "23px")
+        XCTAssertNotNil(PrintCoordinator().operation(for: webView))
+    }
+
     private func load(html: String, into webView: WKWebView) async throws {
         try await withCheckedThrowingContinuation { continuation in
             let delegate = NavigationFinishDelegate(continuation: continuation)

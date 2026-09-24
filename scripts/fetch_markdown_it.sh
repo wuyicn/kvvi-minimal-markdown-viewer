@@ -12,4 +12,3 @@ actual=$(shasum -a 256 "$destination" | awk '{print $1}')
   print -u2 "markdown-it 校验失败: $actual"
   exit 1
 }
-
